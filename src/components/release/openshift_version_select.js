@@ -1,68 +1,54 @@
-import React, {Component} from "react";
+import React, {useEffect, useState} from "react";
 import {Select} from "antd";
 import {getReleaseBranchesFromOcpBuildData} from "../../api_calls/release_calls";
-import {Navigate} from "react-router";
 
 const {Option} = Select;
 
+function OpenshiftVersionSelect() {
+    const [data, setData] = useState([]);
+    const [onSelectVersion, setOnSelectVersion] = useState(undefined);
 
-export default class OpenshiftVersionSelect extends Component {
+    const setDataFunc = () => {
+        getReleaseBranchesFromOcpBuildData().then(loopData => {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            data: [],
-            loading: true,
-            onSelectVersion: undefined
-        }
-
-        this.setData();
-    }
-
-    setData = () => {
-        getReleaseBranchesFromOcpBuildData().then(data => {
-
-            let select_data = [];
-            data.forEach((openshiftVersionDetail) => {
-                select_data.push(openshiftVersionDetail["name"]);
+            let selectData = [];
+            loopData.forEach((openshiftVersionDetail) => {
+                selectData.push(openshiftVersionDetail["name"]);
             });
 
-            this.setState({data: select_data}, () => {
-                this.setState({loading: false})
-            })
+            setData(selectData);
         })
     }
 
-    UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
-        this.setState({onSelectVersion: undefined})
+    const onChangeFunc = (value) => {
+        setOnSelectVersion(value);
     }
 
-    onChange = (value) => {
-        this.setState({onSelectVersion: value})
-    }
+    const generateSelectOptionFromStateDate = (stateData) => {
+        return stateData.map((openshiftVersion) => {
 
-    generateSelectOptionFromStateDate = (state_data) => {
-        return state_data.map((openshiftVersion) => {
             return (
                 <Option value={openshiftVersion}>{openshiftVersion}</Option>
             )
         })
     }
 
-    render() {
-        if (this.state.onSelectVersion === undefined) {
-            return (
-                <div className={"right"} style={{padding: "30px"}}>
-                    <Select loading={this.state.loading} placeholder={"OpenShift Version"} onChange={this.onChange}>
-                        {this.generateSelectOptionFromStateDate(this.state.data)}
-                    </Select>
-                </div>
+    useEffect(() => {
+        setDataFunc();
+    }, [])
 
-            );
-        } else {
-            return <Navigate to={`/release/status/${this.state.onSelectVersion}`}/>;
-        }
+    if (onSelectVersion === undefined) {
+        return (
+            <div className={"right"} style={{padding: "30px"}}>
+                <Select placeholder={"OpenShift Version"} onChange={onChangeFunc}>
+                    {generateSelectOptionFromStateDate(data)}
+                </Select>
+            </div>
 
+        );
+    } else {
+        window.location.replace(`/release/status?branch=${onSelectVersion}`);
     }
-
 }
+
+export default OpenshiftVersionSelect;

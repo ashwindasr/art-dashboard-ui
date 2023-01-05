@@ -1,57 +1,57 @@
-import React, {Component} from "react";
-import RELEASE_BRANCH_DETAIL from "./release_branch_detail";
+import React, {useEffect, useState} from "react";
 import {message} from "antd";
-import OpenshiftVersionSelect from "./openshift_version_select";
-import {useParams} from "react-router-dom";
+import RELEASE_BRANCH_DETAIL from "./release_branch_detail";
+import OPENSHIFT_VERSION_SELECT from "./openshift_version_select";
+import {useSearchParams} from "react-router-dom";
 
+function ReleaseHomePage() {
+    const [currentBranch, setCurrentBranch] = useState(undefined);
+    const [queryParameters] = useSearchParams()
 
+    message.config({
+        maxCount: 2
+    })
 
-export default class Release_home_page extends Component {
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            release_table_data: [],
-            current_branch: undefined,
-            loaded_shown: false,
-        }
-
-        message.config({
-            maxCount: 2
-        })
-
+    const displayLoading = () => {
+        message.loading({
+            content: "Loading Data",
+            duration: 0,
+            style: {position: "fixed", left: "50%", top: "20%"}
+        }).then(r => {/* do nothing */
+        });
     }
 
-
-    componentDidMount() {
-        this.setState({current_branch: window.location.href.split("/")[5]});
-        this.display_loading();
-    }
-
-    display_loading = () => {
-        message.loading({content: "Loading Data", duration: 0, style: {position: "fixed", left: "50%", top: "20%"}});
-    }
-
-    destroy_loading = () => {
+    const destroyLoading = () => {
 
         message.destroy()
         message.success({
             content: "Loaded",
             duration: 2,
             style: {position: "fixed", left: "50%", top: "20%", color: "#316DC1"}
+        }).then(r => {/* do nothing */
         })
 
     }
 
+    useEffect(() => {
+        if (queryParameters.get("branch")) {
+            setCurrentBranch(queryParameters.get("branch"));
+        }
 
-    render() {
-        return (
-            <div>
-                <OpenshiftVersionSelect/>
-                <RELEASE_BRANCH_DETAIL branch={this.state.current_branch}
-                                       destroy_loading_callback={this.destroy_loading}/>
-            </div>
-        );
-    }
+    }, [queryParameters])
+
+    useEffect(() => {
+        displayLoading();
+    }, [])
+
+
+    return (
+        <div>
+            <OPENSHIFT_VERSION_SELECT/>
+            <RELEASE_BRANCH_DETAIL branch={currentBranch}
+                                   destroyLoadingCallback={destroyLoading}/>
+        </div>
+    );
 }
+
+export default ReleaseHomePage;
