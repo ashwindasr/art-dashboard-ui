@@ -13,14 +13,15 @@ import Cookies from "js-cookie";
 
 
 function App() {
-    const [gaVersionValue, setGaVersionValue] = useState("4.11");
-
+    const [gaVersionValue, setGaVersionValue] = useState("4.11");   // Default set to 4.11
 
     const getGaVersion = () => {
         gaVersion().then(data => {
             if (data["status"] === "success") {
                 setGaVersionValue(data["payload"]);
-                Cookies.set("openshift_ga_version", data["payload"])
+                Cookies.set("openshift_ga_version", data["payload"], {
+                    maxAge: 3600 // Will expire after 1hr (value is in number of sec.)
+                })
             }
         })
     }
@@ -49,11 +50,11 @@ function App() {
                                     Release status
                                 </Link>
                             </Menu.Item>
-                            <Menu.Item key="buildMenuItem" icon={<HistoryOutlined/>}>
-                                <Link to="/build/history">
-                                    Build History
-                                </Link>
-                            </Menu.Item>
+                            {/*<Menu.Item key="buildMenuItem" icon={<HistoryOutlined/>}>*/}
+                            {/*    <Link to="/build/history">*/}
+                            {/*        Build History*/}
+                            {/*    </Link>*/}
+                            {/*</Menu.Item>*/}
                             <Menu.Item key={"whatsNew"} icon={<ToolOutlined/>}>
                                 <Link to={"/help"}>
                                     Help
@@ -75,7 +76,7 @@ function App() {
                             <Content>
                                 <Routes>
                                     <Route path="/release/status" element={<RELEASE_HOME_PAGE/>}/>
-                                    <Route path="/build/history" element={<BUILD_HISTORY_HOME/>}/>
+                                    {/*<Route path="/build/history" element={<BUILD_HISTORY_HOME/>}/>*/}
                                     <Route path='/'
                                            element={<Navigate to={`/release/status?branch=openshift-${gaVersionValue}`}
                                                               replace/>}/>
@@ -85,7 +86,7 @@ function App() {
                             <Spin/>
                     }
                     <Footer style={{textAlign: 'center'}}>
-                        RedHat ©2023
+                        RedHat © 2023
                     </Footer>
                 </Layout>
             </Layout>

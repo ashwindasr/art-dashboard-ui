@@ -3,7 +3,7 @@ import {advisory_details_for_advisory_id, advisory_ids_for_branch} from "../../a
 import {Empty, Typography} from "antd";
 import RELEASE_BRANCH_DETAIL_TABLE from "./release_branch_detail_table";
 
-const {Title, Text} = Typography;
+const {Title} = Typography;
 
 
 function ReleaseBranchDetail(props) {
@@ -127,18 +127,29 @@ function ReleaseBranchDetail(props) {
 
     return (
         <div>
-            <Title style={{paddingLeft: "20px", paddingTop: "40px"}} level={2}><Text code>{props.branch}</Text></Title>
+            <Title style={{paddingLeft: "20px", paddingTop: "40px"}} level={2}><code>{props.branch}</code></Title>
+
+            <Title style={{paddingLeft: "40px", paddingTop: "40px"}} level={4}>
+                <code>{"Current Advisories"}</code>
+            </Title>
+            {
+                advisoryDetails ?
+                    <>
+                        <RELEASE_BRANCH_DETAIL_TABLE data={advisoryDetails}/>
+                    </>
+                    :
+                    <Empty/>
+
+            }
+            <br/>
+
+            <Title style={{paddingLeft: "40px", paddingTop: "40px"}} level={4}>
+                <code>{"Previous Advisories"}</code>
+            </Title>
 
             {
-                advisoryDetails && advisoryDetailsPrevious ?
+                advisoryDetailsPrevious ?
                     <>
-                        <Title style={{paddingLeft: "40px", paddingTop: "40px"}} level={4}>
-                            <Text code>{"Current Advisories"}</Text>
-                        </Title>
-                        <RELEASE_BRANCH_DETAIL_TABLE data={advisoryDetails}/>
-                        <br/>
-                        <Title style={{paddingLeft: "40px", paddingTop: "40px"}} level={4}><Text
-                            code>{"Previous Advisories"}</Text></Title>
                         <RELEASE_BRANCH_DETAIL_TABLE data={advisoryDetailsPrevious}/>
                     </>
                     :
