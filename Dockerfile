@@ -18,4 +18,4 @@ RUN npm install react-scripts -g --silent
 COPY . ./
 EXPOSE 3000
 # start app
-CMD ["npm", "start"]
+CMD ["serve", "-s", "build", "-l", "3000"]
