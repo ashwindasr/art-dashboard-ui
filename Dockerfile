@@ -1,21 +1,8 @@
-# pull official base image
 FROM node:18
-
-# set working directory
-WORKDIR /app
-
-# add `/app/node_modules/.bin` to $PATH
-ENV PATH /app/node_modules/.bin:$PATH
-
-# install app dependencies
-COPY package.json ./
-COPY package-lock.json ./
+WORKDIR /opt/app-root/src
 RUN npm install -g serve
-RUN npm install --silent
-RUN npm install react-scripts -g --silent
-
-# add app
-COPY . ./
-EXPOSE 3000
-# start app
-CMD ["serve", "-s", "build", "-l", "3000"]
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 8080
+CMD [" node_modules/serve/bin/serve.js", "-s", "build", "-l", "8080"]
