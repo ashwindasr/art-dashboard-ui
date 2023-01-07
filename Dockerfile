@@ -10,9 +10,9 @@ ENV PATH /app/node_modules/.bin:$PATH
 # install app dependencies
 COPY package.json ./
 COPY package-lock.json ./
-RUN npm install -g serve
+USER 0
+RUN npm install -g serve react-scripts
 RUN npm install
-RUN npm install react-scripts -g
 
 # add app
 COPY . ./
