@@ -8,6 +8,7 @@ import {
     RocketOutlined
 } from '@ant-design/icons';
 import RELEASE_HOME_PAGE from "./components/release/release_home_page";
+import BUILD_HISTORY_HOME from "./components/build/build_history_home";
 import Cookies from "js-cookie";
 
 
@@ -75,6 +76,7 @@ function App() {
                             <Content>
                                 <Routes>
                                     <Route path="/release/status" element={<RELEASE_HOME_PAGE/>}/>
+                                    {/*<Route path="/build/history" element={<BUILD_HISTORY_HOME/>}/>*/}
                                     <Route path='/'
                                            element={<Navigate to={`/release/status?branch=openshift-${gaVersionValue}`}
                                                               replace/>}/>
